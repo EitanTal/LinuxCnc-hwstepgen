@@ -1,0 +1,23 @@
+
+
+Joystick port:
+
+1   3   5   7   9
+2   4   6   8  10
+
+
+PIN-to-joystick:   (SPI)
+55 - PB3  -  4     (SPI_CLK)
+56 - PB4  -  3     (SPI_MISO)
+57 - PB5  -  ?     (SPI_MOSI)
+
+
+PIN-to-joystick:   (UART)
+58 - PB6  -  5     (UART-TX)
+59 - PB7  -  6     (UART-RX)
+60 - Boot0
+
+
+
+GND                         - 10
+shared resistors (pullup??) - 9

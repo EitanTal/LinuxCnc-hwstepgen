@@ -1,0 +1,14 @@
+.mxproject
+*.o
+*.dep
+*.xcl
+*.pbi
+*.pbd
+*.browse
+*.pbw
+EWARM/LinuxCnc-hwstepgen/BrowseInfo/
+EWARM/LinuxCnc-hwstepgen/Exe/
+EWARM/LinuxCnc-hwstepgen/List/
+EWARM/settings/
+*.ninja_deps
+*.ninja_log

@@ -101,11 +101,34 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  uint8_t in_byte = 0;
+  uint8_t in_buf[20] = {0};
+  char out_buf[20] = {0};
+  static int index = 0;
+  float var = 0;
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    if (HAL_UART_Receive(&huart1, &in_byte, sizeof(in_byte), 50) == HAL_OK)
+    {
+      if (in_byte == '\n' || in_byte == '\r')
+      {
+        in_buf[index] = '\0';
+        sscanf(in_buf, "%f", &var); // %lf for double?
+        sprintf(out_buf, "D: %f\n", var);
+        HAL_UART_Transmit(&huart1, out_buf, strlen(out_buf), 500);
+        index = 0;
+      }
+      else
+      {
+        in_buf[index] = in_byte;
+        index++;
+        if (index >= sizeof(in_buf)) index = 0;
+      }
+    }
+    HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
   }
   /* USER CODE END 3 */
 }
@@ -251,7 +274,7 @@ static void MX_USART1_UART_Init(void)
 
   /* USER CODE END USART1_Init 1 */
   huart1.Instance = USART1;
-  huart1.Init.BaudRate = 115200;
+  huart1.Init.BaudRate = 9600;
   huart1.Init.WordLength = UART_WORDLENGTH_8B;
   huart1.Init.StopBits = UART_STOPBITS_1;
   huart1.Init.Parity = UART_PARITY_NONE;

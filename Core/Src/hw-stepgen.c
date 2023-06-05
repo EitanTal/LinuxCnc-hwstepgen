@@ -61,7 +61,7 @@ void update(void)
     // calculate the new period. For Zero velocity, the period is 64K, but the timer is not enabled
     // for slow velocity, increase the prescaler, even to the point of a longer pulse. Cap extremely slow velocities, else the pulse gets too long making it difficult to wait until it ends
     float ticks_per_pulse = ZERO_VELOCITY;
-    if (fabs(g_vel_x) > 0.001)
+    if (fabs(g_vel_x) > 0.1)
     {
         static const float ticks_per_second = CLK_FREQUENCY_HZ;
         ticks_per_pulse = ticks_per_second / fabs(g_vel_x); // ! Consider rounding?
@@ -75,7 +75,7 @@ void update(void)
     if (ticks_per_pulse > ZERO_VELOCITY)
     {
         htim3.Instance->ARR = ticks_per_pulse -1; // ! watch out for ticks_per_pulse == zero
-        htim3.Instance->PSC = prescaler;
+        htim3.Instance->PSC = prescaler; // ! oops, changes to prescaler only apply after the next cycle
     }
     int pulse_len_ticks = CEIL_DIV(CLK_FREQUENCY_MHZ * PULSE_LEN_US, (prescaler+1)); // ! ceiling div? Watch out for zero length
     htim3.Instance->CCR4 = pulse_len_ticks;

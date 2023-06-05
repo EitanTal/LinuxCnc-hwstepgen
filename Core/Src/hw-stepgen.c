@@ -32,6 +32,8 @@ void timer_pulse_x(void)
     g_pos_x += dir_x;
 }
 
+#define CEIL_DIV(a,b)  ((a+b-1.0) / b)
+
 void update(void)
 {
     // (repeat for y, z, a)
@@ -42,12 +44,15 @@ void update(void)
     old_vel_x = g_vel_x;
 
     // stop the timer, or wait until the timer finishes the pulse, then stop the timer
-    HAL_TIM_Base_Stop(&htim3);
+    //HAL_TIM_Base_Stop(&htim3);
+    htim3.Instance->CR1 &= ~(TIM_CR1_CEN);
     while (htim3.Instance->CNT < htim3.Instance->CCR4) // maybe do a one-pulse mode?
     {
-        HAL_TIM_Base_Start(&htim3);
+        //HAL_TIM_Base_Start(&htim3);
+        htim3.Instance->CR1 &= ~(TIM_CR1_CEN);
         // ...
-        HAL_TIM_Base_Stop(&htim3);
+        //HAL_TIM_Base_Stop(&htim3);
+        htim3.Instance->CR1 |= (TIM_CR1_CEN);
     }
 
     // collect the current timer position
@@ -59,20 +64,20 @@ void update(void)
     if (fabs(g_vel_x) > 0.001)
     {
         static const float ticks_per_second = CLK_FREQUENCY_HZ;
-        ticks_per_pulse = ticks_per_second / fabs(g_vel_x);
+        ticks_per_pulse = ticks_per_second / fabs(g_vel_x); // ! Consider rounding?
     }
     int prescaler = 0;
-    if (ticks_per_pulse > 0xFFFF)
+    if (ticks_per_pulse >= 0xFFFF) // ! actual cycle length. ARR register takes in that, minus one.
     {
         prescaler = ticks_per_pulse / 0xFFFF;
-        ticks_per_pulse = ticks_per_pulse / prescaler;
+        ticks_per_pulse = ticks_per_pulse / (prescaler+1); // ! Consider rounding?
     }
     if (ticks_per_pulse > ZERO_VELOCITY)
     {
-        htim3.Instance->ARR = ticks_per_pulse;
+        htim3.Instance->ARR = ticks_per_pulse -1; // ! watch out for ticks_per_pulse == zero
         htim3.Instance->PSC = prescaler;
     }
-    int pulse_len_ticks = (CLK_FREQUENCY_MHZ * PULSE_LEN_US / (prescaler+1));
+    int pulse_len_ticks = CEIL_DIV(CLK_FREQUENCY_MHZ * PULSE_LEN_US, (prescaler+1)); // ! ceiling div? Watch out for zero length
     htim3.Instance->CCR4 = pulse_len_ticks;
 
     // calculate the starting point. For Zero velocity, the starting point is % of 64K (Or leave unchanged?)
@@ -102,6 +107,7 @@ void update(void)
     // start the timer if the velocity is not zero
     if (ticks_per_pulse > ZERO_VELOCITY)
     {
-        HAL_TIM_Base_Start(&htim3);
+        //HAL_TIM_Base_Start(&htim3);
+      htim3.Instance->CR1 |= (TIM_CR1_CEN);
     }
 }

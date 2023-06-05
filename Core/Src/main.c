@@ -121,6 +121,7 @@ int main(void)
   char out_buf[20] = {0};
   static int index = 0;
   float var = 0;
+  htim3.Instance->CCER = 0x1000; // CC4E
   HAL_TIM_Base_Start_IT(&htim3);
   while (1)
   {

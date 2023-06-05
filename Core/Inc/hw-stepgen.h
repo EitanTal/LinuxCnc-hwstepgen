@@ -1,12 +1,15 @@
 #pragma once
 
-double g_vel_x;
-double g_vel_y;
+#include <stdint.h>
+
+// Pulses per second (I think? We'll see when I get linuxCNC traffic)
+extern double g_vel_x;
+extern double g_vel_y;
 // z
 // a
 
-int32_t g_pos_x;
-int32_t g_pos_y;
+extern int32_t g_pos_x;
+extern int32_t g_pos_y;
 // z,a
 
 /**

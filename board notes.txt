@@ -17,7 +17,11 @@ PIN-to-joystick:   (UART)
 59 - PB7  -  6     (UART-RX)
 60 - Boot0
 
-
+Other joystick pins:
+54 - PD2   - 1
+53 - PC12  - 2
+61 - PB8   - 7
+62 - PB9   - 8
 
 GND                         - 10
 shared resistors (pullup??) - 9

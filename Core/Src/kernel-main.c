@@ -46,9 +46,6 @@ volatile uint8_t spi_rx[SPI_TRANSACTION_SIZE];
 
 int pending_spi;
 
-//static int32_t positions[AXES];
-//static int32_t velocities[AXES];
-
 static void reset_board(void)
 {
 
@@ -77,18 +74,8 @@ static void process_spi(void)
     spi_tx[0] = ~cmd;
     if (cmd == CMD_UPDATE)
     {
-        #if 0
-        S_RX_UPDATE* a = (S_RX_UPDATE*)&spi_rx;
-        // ! disable interrupts
-        velocities[0] = a->velocity[0];
-        velocities[1] = a->velocity[1];
-        velocities[2] = a->velocity[2];
-        velocities[3] = a->velocity[3];
-        // ! enable interrupts
-        #else
         S_RX_UPDATE* a = (S_RX_UPDATE*)&spi_rx;
         stepgen_update_input(&a->velocity);
-        #endif
     }
     else if (cmd == CMD_CONFIG)
     {

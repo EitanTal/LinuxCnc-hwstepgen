@@ -20,6 +20,13 @@
 
 */
 
+// Aliases
+#define YP_ORIG_GPIO_Port YP_GPIO_Port
+#define YP_ORIG_Pin       YP_Pin
+#define AP_ORIG_GPIO_Port AP_GPIO_Port
+#define AP_ORIG_Pin       AP_Pin
+
+
 GPIO_TypeDef* table_gpios_pulses[4]  = {XP_GPIO_Port, YP_ORIG_GPIO_Port, ZP_GPIO_Port, AP_ORIG_GPIO_Port};
 uint32_t   table_pins_pulses_set[4]  = {XP_Pin,       YP_ORIG_Pin,       ZP_Pin,       AP_ORIG_Pin};
 uint32_t table_pins_pulses_reset[4]  = {XP_Pin << 16, YP_ORIG_Pin << 16, ZP_Pin << 16, AP_ORIG_Pin << 16};

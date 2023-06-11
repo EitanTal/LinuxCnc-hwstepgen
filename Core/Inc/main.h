@@ -111,7 +111,7 @@ void Error_Handler(void);
 #define JOY8_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
-
+typedef __uint32_t uint32_t; // stupid VSCODE
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

@@ -18,8 +18,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <plib.h>
-#include "hardware.h"
-#include "stepgen.h"
+#include "orig_hardware.h"
+#include "orig_stepgen.h"
 
 #pragma config POSCMOD = XT		/* Primary Oscillator XT mode */
 #pragma config FNOSC = PRIPLL		/* Primary Osc w/PLL */

@@ -20,8 +20,8 @@
 
 #include <string.h>
 
-#include "hardware.h"
-#include "stepgen.h"
+#include "orig_hardware.h"
+#include "orig_stepgen.h"
 
 /*
   Timing diagram:

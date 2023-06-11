@@ -18,10 +18,21 @@ PIN-to-joystick:   (UART)
 60 - Boot0
 
 Other joystick pins:
-54 - PD2   - 1
-53 - PC12  - 2
+54 - PD2   - 1     GREEN-DATA READY
+53 - PC12  - 2     BLUE -DATA REQUEST
 61 - PB8   - 7
 62 - PB9   - 8
 
 GND                         - 10
 shared resistors (pullup??) - 9
+
+
+SPI connector          <->         RSPI pin       GPIO
+RED   - JOY3 - SPI_MISO            21             9
+blue  - xxxx - SPI_NSS (PA15)      26             7 (NC)
+blue  - xxxx - SPI_MOSI            19             10
+GREEN - JOY4 - SPI_CLK             23             11
+BLACK - xxxx - GND         6,9,14,20,25,30,34,39
+(NC)
+GREEN - JOY1 - DATA READY          22             25
+BLUE  - JOY2 - DATA REQUEST        16             23

@@ -101,10 +101,10 @@ void Error_Handler(void);
 #define OUT4_GPIO_Port GPIOC
 #define SPINDLE_PWM_Pin GPIO_PIN_8
 #define SPINDLE_PWM_GPIO_Port GPIOA
-#define JOY2_Pin GPIO_PIN_12
-#define JOY2_GPIO_Port GPIOC
-#define JOY1_Pin GPIO_PIN_2
-#define JOY1_GPIO_Port GPIOD
+#define DATA_REQUEST_Pin GPIO_PIN_12
+#define DATA_REQUEST_GPIO_Port GPIOC
+#define DATA_READY_Pin GPIO_PIN_2
+#define DATA_READY_GPIO_Port GPIOD
 #define JOY7_Pin GPIO_PIN_8
 #define JOY7_GPIO_Port GPIOB
 #define JOY8_Pin GPIO_PIN_9

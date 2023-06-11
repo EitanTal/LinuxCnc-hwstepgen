@@ -47,6 +47,34 @@
 static volatile uint32_t rxBuf[BUFSIZE], txBuf[BUFSIZE];
 static volatile int spi_data_ready;
 
+
+struct reply_buf
+{
+    uint32_t prev_cmd_chksum; // bit-inversion of the command bytes, before this one
+    int32_t  positions[MAXGEN]; // x, y, z and a positions, as int32_t
+    uint32_t input_switches;
+    uint32_t reserved[2];
+}; // total sizeof: 32 bytes
+
+struct rx_cmd
+{
+    uint32_t cmd; // == '>CMD'
+    int32_t  velocities[MAXGEN]; // x, y, z and a velocities, as int32_t
+    uint32_t output_switches;
+    uint32_t pwm_duty1;
+    uint32_t pwm_duty2;
+}; // total sizeof: 32 bytes
+
+struct rx_cfg
+{
+    uint32_t cmd; // == '>CFG'
+    int32_t  stepwidth;
+    uint32_t pwmfreq;
+    uint32_t reserved[5];
+}; // total sizeof: 32 bytes
+
+
+
 static void init_io_ports()
 {
     U1PWRCbits.USUSPEND = 1;
@@ -184,7 +212,7 @@ int main(void)
     OSCSetPBDIV(OSC_PB_DIV_1);
 
     /* configure the core timer roll-over rate */
-    OpenCoreTimer(CORE_TICK_RATE);
+    OpenCoreTimer(CORE_TICK_RATE); // Interrupt @ 320KHz
 
     /* set up the core timer interrupt */
     mConfigIntCoreTimer((CT_INT_ON | CT_INT_PRIOR_6 | CT_INT_SUB_PRIOR_0));

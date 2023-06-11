@@ -115,7 +115,7 @@ int main(void)
   MX_TIM5_Init();
   MX_TIM6_Init();
   /* USER CODE BEGIN 2 */
-
+  kernel_main_entry();
   /* USER CODE END 2 */
 
   /* Infinite loop */

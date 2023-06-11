@@ -3,7 +3,7 @@
 #include "kernel-stepgen.h"
 
 extern SPI_HandleTypeDef hspi1;
-
+extern TIM_HandleTypeDef htim6;
 
 #define SPI_TRANSACTION_SIZE 32
 
@@ -63,10 +63,11 @@ static void snapshot(void)
     a->positions[1] = positions[1];
     a->positions[2] = positions[2];
     a->positions[3] = positions[3];
-    a->input = 0x12;
     // ! enable interrupts
     #else
-    stepgen_get_position(&spi_tx);
+    S_TX_REPLY* a = (S_TX_REPLY*)&spi_tx;
+    stepgen_get_position(&a->positions);
+    a->input = 0x12;
     #endif
 }
 
@@ -85,7 +86,8 @@ static void process_spi(void)
         velocities[3] = a->velocity[3];
         // ! enable interrupts
         #else
-        stepgen_update_input(&spi_rx);
+        S_RX_UPDATE* a = (S_RX_UPDATE*)&spi_rx;
+        stepgen_update_input(&a->velocity);
         #endif
     }
     else if (cmd == CMD_CONFIG)
@@ -105,6 +107,7 @@ void kernel_main_entry(void)
 {
     reset_board();
     HAL_SPI_TransmitReceive_DMA(&hspi1, (uint8_t*)&spi_tx, (uint8_t*)&spi_rx, sizeof(spi_tx));
+    HAL_TIM_Base_Start_IT(&htim6);
 
     int counter = 0;
     int idle_counter = 0;
@@ -130,10 +133,11 @@ void kernel_main_entry(void)
             idle_counter--;
         else
             reset_board();
-
+#if 1
         if (!(counter++ % (idle_counter ? 0x10000 : 0x20000))) {
             LED_TOGGLE();
         }
+#endif
     }
 }
 

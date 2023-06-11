@@ -112,6 +112,7 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN Private defines */
 typedef __uint32_t uint32_t; // stupid VSCODE
+#define AXES 4
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

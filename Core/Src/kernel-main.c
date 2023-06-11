@@ -1,15 +1,16 @@
 #include <stdint.h>
 #include "main.h"
-//#include "spi.h"
+#include "kernel-stepgen.h"
+
 extern SPI_HandleTypeDef hspi1;
 
-#define AXES 4
+
 #define SPI_TRANSACTION_SIZE 32
 
-#define RECORD_DATA()     0
-#define DATA_READY()      0
-#define DATA_NOT_READY()  0
-#define LED_TOGGLE()      0
+#define RECORD_DATA()     (HAL_GPIO_ReadPin(DATA_REQUEST_GPIO_Port, DATA_REQUEST_Pin) == GPIO_PIN_SET)
+#define DATA_READY()      (HAL_GPIO_WritePin(DATA_READY_GPIO_Port, DATA_READY_Pin, GPIO_PIN_SET))
+#define DATA_NOT_READY()  (HAL_GPIO_WritePin(DATA_READY_GPIO_Port, DATA_READY_Pin, GPIO_PIN_RESET))
+#define LED_TOGGLE()      LED_GPIO_Port->ODR ^= LED_Pin
 
 enum
 {
@@ -40,13 +41,13 @@ typedef struct
     uint32_t    input;
 } S_TX_REPLY;
 
-volatile uint8_t spi_tx[SPI_TRANSACTION_SIZE]; // volatile becasue DMA writes to this
+volatile uint8_t spi_tx[SPI_TRANSACTION_SIZE]; // volatile because DMA writes to this
 volatile uint8_t spi_rx[SPI_TRANSACTION_SIZE];
 
 int pending_spi;
 
-static int32_t positions[AXES];
-static int32_t velocities[AXES];
+//static int32_t positions[AXES];
+//static int32_t velocities[AXES];
 
 static void reset_board(void)
 {
@@ -55,6 +56,7 @@ static void reset_board(void)
 
 static void snapshot(void)
 {
+    #if 0
     S_TX_REPLY* a = (S_TX_REPLY*)&spi_tx;
     // ! disable interrupts
     a->positions[0] = positions[0];
@@ -63,6 +65,9 @@ static void snapshot(void)
     a->positions[3] = positions[3];
     a->input = 0x12;
     // ! enable interrupts
+    #else
+    stepgen_get_position(&spi_tx);
+    #endif
 }
 
 static void process_spi(void)
@@ -71,6 +76,7 @@ static void process_spi(void)
     spi_tx[0] = ~cmd;
     if (cmd == CMD_UPDATE)
     {
+        #if 0
         S_RX_UPDATE* a = (S_RX_UPDATE*)&spi_rx;
         // ! disable interrupts
         velocities[0] = a->velocity[0];
@@ -78,11 +84,14 @@ static void process_spi(void)
         velocities[2] = a->velocity[2];
         velocities[3] = a->velocity[3];
         // ! enable interrupts
-
+        #else
+        stepgen_update_input(&spi_rx);
+        #endif
     }
     else if (cmd == CMD_CONFIG)
     {
-
+        S_RX_CONFIG* a = (S_RX_CONFIG*)&spi_rx;
+        stepgen_update_stepwidth(a->stepwidth);
     }
 }
 

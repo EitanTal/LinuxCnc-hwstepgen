@@ -339,7 +339,9 @@ void TIM5_IRQHandler(void)
 void TIM6_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM6_IRQn 0 */
-
+  __HAL_TIM_CLEAR_IT(&htim6, TIM_IT_UPDATE);
+  kernel_update();
+  return;
   /* USER CODE END TIM6_IRQn 0 */
   HAL_TIM_IRQHandler(&htim6);
   /* USER CODE BEGIN TIM6_IRQn 1 */

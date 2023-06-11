@@ -1,4 +1,7 @@
 #include <stdint.h>
+#include "main.h"
+//#include "spi.h"
+extern SPI_HandleTypeDef hspi1;
 
 #define AXES 4
 #define SPI_TRANSACTION_SIZE 32
@@ -6,6 +9,7 @@
 #define RECORD_DATA()     0
 #define DATA_READY()      0
 #define DATA_NOT_READY()  0
+#define LED_TOGGLE()      0
 
 enum
 {
@@ -27,7 +31,7 @@ typedef struct
     uint32_t    command;
     uint32_t    stepwidth;
     uint32_t    pwmfreq;
-} S_RX_UPDATE;
+} S_RX_CONFIG;
 
 typedef struct
 {
@@ -36,19 +40,55 @@ typedef struct
     uint32_t    input;
 } S_TX_REPLY;
 
-volatile uint8_t spi_tx[SPI_TRANSACTION_SIZE];
+volatile uint8_t spi_tx[SPI_TRANSACTION_SIZE]; // volatile becasue DMA writes to this
 volatile uint8_t spi_rx[SPI_TRANSACTION_SIZE];
 
 int pending_spi;
 
-void reset_board(void)
+static int32_t positions[AXES];
+
+static void reset_board(void)
 {
 
+}
+
+static void snapshot(void)
+{
+    S_TX_REPLY* a = (S_TX_REPLY*)&spi_tx;
+    // ! disable interrupts
+    a->positions[0] = positions[0];
+    a->positions[1] = positions[1];
+    a->positions[2] = positions[2];
+    a->positions[3] = positions[3];
+    a->input = 0x12;
+    // ! enable interrupts
+}
+
+static void process_spi(void)
+{
+    uint32_t cmd = spi_rx[0];
+    spi_tx[0] = ~cmd;
+    if (cmd == CMD_UPDATE)
+    {
+
+    }
+    else if (cmd == CMD_CONFIG)
+    {
+
+    }
+}
+
+void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
+{
+    HAL_SPI_TransmitReceive_DMA(&hspi1, (uint8_t*)&spi_tx, (uint8_t*)&spi_rx, sizeof(spi_tx));
+    pending_spi = 1;
 }
 
 void kernel_main_entry(void)
 {
     reset_board();
+    HAL_SPI_TransmitReceive_DMA(&hspi1, (uint8_t*)&spi_tx, (uint8_t*)&spi_rx, sizeof(spi_tx));
+
     int counter = 0;
     int idle_counter = 0;
     for (;;)
@@ -63,6 +103,7 @@ void kernel_main_entry(void)
 
         if (pending_spi)
         {
+            pending_spi = 0;
             idle_counter = 200000;
             process_spi();
         }
@@ -74,7 +115,8 @@ void kernel_main_entry(void)
             reset_board();
 
         if (!(counter++ % (idle_counter ? 0x10000 : 0x20000))) {
-            LED_TOGGLE;
+            LED_TOGGLE();
         }
     }
 }
+

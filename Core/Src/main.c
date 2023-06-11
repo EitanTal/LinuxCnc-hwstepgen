@@ -139,7 +139,7 @@ int main(void)
         HAL_UART_Transmit(&huart1, (uint8_t*)out_buf, strlen(out_buf), 500);
         index = 0;
 
-        g_vel_x = var;
+        //g_vel_x = var;
         update();
       }
       else

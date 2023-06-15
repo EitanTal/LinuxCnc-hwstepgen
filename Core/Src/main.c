@@ -410,7 +410,7 @@ static void MX_TIM6_Init(void)
   TIM_MasterConfigTypeDef sMasterConfig = {0};
 
   /* USER CODE BEGIN TIM6_Init 1 */
-
+// ! HERE
   /* USER CODE END TIM6_Init 1 */
   htim6.Instance = TIM6;
   htim6.Init.Prescaler = 0;
@@ -593,7 +593,7 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin : DATA_REQUEST_Pin */
   GPIO_InitStruct.Pin = DATA_REQUEST_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(DATA_REQUEST_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : DATA_READY_Pin */

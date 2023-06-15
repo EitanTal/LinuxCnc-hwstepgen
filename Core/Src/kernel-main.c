@@ -14,8 +14,8 @@ extern TIM_HandleTypeDef htim6;
 
 enum
 {
-    CMD_UPDATE = '>CMD',
-    CMD_CONFIG = '>CFG',
+    CMD_UPDATE = 'DMC>', //'>CMD',
+    CMD_CONFIG = 'GFC>', //'>CFG',
 };
 
 typedef struct
@@ -26,6 +26,11 @@ typedef struct
     uint32_t    pwm1;
     uint32_t    pwm2;
 } S_RX_UPDATE;
+
+typedef struct
+{
+    uint32_t    command;
+} S_RX_PACKET;
 
 typedef struct
 {
@@ -53,25 +58,17 @@ static void reset_board(void)
 
 static void snapshot(void)
 {
-    #if 0
-    S_TX_REPLY* a = (S_TX_REPLY*)&spi_tx;
-    // ! disable interrupts
-    a->positions[0] = positions[0];
-    a->positions[1] = positions[1];
-    a->positions[2] = positions[2];
-    a->positions[3] = positions[3];
-    // ! enable interrupts
-    #else
     S_TX_REPLY* a = (S_TX_REPLY*)&spi_tx;
     stepgen_get_position(&a->positions);
-    a->input = 0x12;
-    #endif
+    a->input = 0x12; // ! TODO implement
 }
 
 static void process_spi(void)
 {
-    uint32_t cmd = spi_rx[0];
-    spi_tx[0] = ~cmd;
+    S_RX_PACKET * a = (S_RX_PACKET *)spi_rx;
+    S_TX_REPLY * b  = (S_TX_REPLY *)spi_tx;
+    uint32_t cmd = a->command;
+    b->last_command_inverted = ~cmd;
     if (cmd == CMD_UPDATE)
     {
         S_RX_UPDATE* a = (S_RX_UPDATE*)&spi_rx;
@@ -86,7 +83,6 @@ static void process_spi(void)
 
 void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
 {
-    HAL_SPI_TransmitReceive_DMA(&hspi1, (uint8_t*)&spi_tx, (uint8_t*)&spi_rx, sizeof(spi_tx));
     pending_spi = 1;
 }
 
@@ -103,6 +99,10 @@ void kernel_main_entry(void)
         if (RECORD_DATA())
         {
             snapshot();
+            if (hspi1.State != HAL_SPI_STATE_BUSY_TX_RX)
+            {
+                HAL_SPI_TransmitReceive_DMA(&hspi1, (uint8_t*)&spi_tx, (uint8_t*)&spi_rx, sizeof(spi_tx));
+            }
             DATA_READY();
         }
         else
@@ -113,6 +113,11 @@ void kernel_main_entry(void)
             pending_spi = 0;
             idle_counter = 200000;
             process_spi();
+        }
+
+        if (hspi1.State != HAL_SPI_STATE_BUSY_TX_RX)
+        {
+            HAL_SPI_TransmitReceive_DMA(&hspi1, (uint8_t*)&spi_tx, (uint8_t*)&spi_rx, sizeof(spi_tx));
         }
 
         /* shutdown stepgen if no activity */

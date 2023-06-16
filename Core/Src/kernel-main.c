@@ -99,6 +99,8 @@ void kernel_main_entry(void)
     HAL_SPI_TransmitReceive_DMA(&hspi1, (uint8_t*)&spi_tx, (uint8_t*)&spi_rx, sizeof(spi_tx));
     HAL_TIM_Base_Start_IT(&htim6);
     HAL_TIM_Base_Start(&htim1);
+    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+    htim1.Instance->CCER = 0x1;
 
     int counter = 0;
     int idle_counter = 0;

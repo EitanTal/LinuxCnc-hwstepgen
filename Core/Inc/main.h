@@ -97,6 +97,8 @@ void Error_Handler(void);
 #define OUT4_GPIO_Port GPIOC
 #define SPINDLE_PWM_Pin GPIO_PIN_8
 #define SPINDLE_PWM_GPIO_Port GPIOA
+#define EXT_RESET_Pin GPIO_PIN_15
+#define EXT_RESET_GPIO_Port GPIOA
 #define DATA_REQUEST_Pin GPIO_PIN_12
 #define DATA_REQUEST_GPIO_Port GPIOC
 #define DATA_READY_Pin GPIO_PIN_2

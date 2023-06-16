@@ -4,6 +4,7 @@
 
 extern SPI_HandleTypeDef hspi1;
 extern TIM_HandleTypeDef htim6;
+extern TIM_HandleTypeDef htim1;
 
 #define SPI_TRANSACTION_SIZE 32
 
@@ -60,7 +61,10 @@ static void snapshot(void)
 {
     S_TX_REPLY* a = (S_TX_REPLY*)&spi_tx;
     stepgen_get_position(&a->positions);
-    a->input = 0x12; // ! TODO implement
+    int InPortStatus = IN1_GPIO_Port->IDR;
+    InPortStatus = InPortStatus >> 12;
+    InPortStatus &= 0xF; // PB12...PB15
+    a->input = InPortStatus;
 }
 
 static void process_spi(void)
@@ -73,11 +77,14 @@ static void process_spi(void)
     {
         S_RX_UPDATE* a = (S_RX_UPDATE*)&spi_rx;
         stepgen_update_input(&a->velocity);
+        htim1.Instance->CCR1 = (a->pwm1 & 0xFFFF);
+        OUT1_GPIO_Port->ODR = OUT1_GPIO_Port->ODR = ((OUT1_GPIO_Port->ODR & ~((0xF) << 6)) | ((a->output & 0xF) << 6));
     }
     else if (cmd == CMD_CONFIG)
     {
         S_RX_CONFIG* a = (S_RX_CONFIG*)&spi_rx;
         stepgen_update_stepwidth(a->stepwidth);
+        htim1.Instance->ARR = a->pwmfreq;
     }
 }
 
@@ -91,6 +98,7 @@ void kernel_main_entry(void)
     reset_board();
     HAL_SPI_TransmitReceive_DMA(&hspi1, (uint8_t*)&spi_tx, (uint8_t*)&spi_rx, sizeof(spi_tx));
     HAL_TIM_Base_Start_IT(&htim6);
+    HAL_TIM_Base_Start(&htim1);
 
     int counter = 0;
     int idle_counter = 0;

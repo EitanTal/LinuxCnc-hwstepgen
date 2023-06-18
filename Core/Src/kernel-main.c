@@ -17,6 +17,7 @@ enum
 {
     CMD_UPDATE = 'DMC>', //'>CMD',
     CMD_CONFIG = 'GFC>', //'>CFG',
+    CMD_GARBAGE = 'XXXX',
 };
 
 typedef struct
@@ -51,6 +52,7 @@ volatile uint8_t spi_tx[SPI_TRANSACTION_SIZE]; // volatile because DMA writes to
 volatile uint8_t spi_rx[SPI_TRANSACTION_SIZE];
 
 int pending_spi;
+uint32_t g_last_cmd;
 
 static void reset_board(void)
 {
@@ -69,16 +71,17 @@ static void snapshot(void)
 
 static void process_spi(void)
 {
-    S_RX_PACKET * a = (S_RX_PACKET *)spi_rx;
-    S_TX_REPLY * b  = (S_TX_REPLY *)spi_tx;
+    volatile S_RX_PACKET * a = (volatile S_RX_PACKET *)spi_rx;
+    volatile S_TX_REPLY * b  = (volatile S_TX_REPLY *)spi_tx;
     uint32_t cmd = a->command;
-    b->last_command_inverted = ~cmd;
+    g_last_cmd = cmd;
     if (cmd == CMD_UPDATE)
     {
-        S_RX_UPDATE* a = (S_RX_UPDATE*)&spi_rx;
-        stepgen_update_input(&a->velocity);
-        htim1.Instance->CCR1 = (a->pwm1 & 0xFFFF);
-        OUT1_GPIO_Port->ODR = OUT1_GPIO_Port->ODR = ((OUT1_GPIO_Port->ODR & ~((0xF) << 6)) | ((a->output & 0xF) << 6));
+        S_RX_UPDATE aa; //= (S_RX_UPDATE*)&spi_rx;
+        memcpy(&aa, spi_rx, sizeof(aa) );
+        stepgen_update_input(&aa.velocity);
+        htim1.Instance->CCR1 = (aa.pwm1 & 0xFFFF);
+        OUT1_GPIO_Port->ODR = OUT1_GPIO_Port->ODR = ((OUT1_GPIO_Port->ODR & ~((0xF) << 6)) | ((aa.output & 0xF) << 6));
     }
     else if (cmd == CMD_CONFIG)
     {
@@ -86,17 +89,29 @@ static void process_spi(void)
         stepgen_update_stepwidth(a->stepwidth);
         htim1.Instance->ARR = a->pwmfreq;
     }
+    else if (cmd == CMD_GARBAGE)
+    {
+
+    }
+    else
+    {
+        LED_TOGGLE(); // Debug: Show an unknown command
+    }
 }
 
 void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
 {
     pending_spi = 1;
+    // re-kickoff. Last CMD must be prepared immediately before the neck kickoff
+    *(uint32_t*)spi_tx = ~(*(uint32_t*)spi_rx);
+    // ? This function commits the first byte of spi_tx, even for a future SPI transaction
+    HAL_SPI_TransmitReceive_DMA(&hspi1, (uint8_t*)&spi_tx, (uint8_t*)&spi_rx, sizeof(spi_tx)); // kickoff the SPI
 }
 
 void kernel_main_entry(void)
 {
     reset_board();
-    HAL_SPI_TransmitReceive_DMA(&hspi1, (uint8_t*)&spi_tx, (uint8_t*)&spi_rx, sizeof(spi_tx));
+    HAL_SPI_TransmitReceive_DMA(&hspi1, (uint8_t*)&spi_tx, (uint8_t*)&spi_rx, sizeof(spi_tx)); // kickoff the SPI
     HAL_TIM_Base_Start_IT(&htim6);
     HAL_TIM_Base_Start(&htim1);
     HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
@@ -109,25 +124,20 @@ void kernel_main_entry(void)
         if (RECORD_DATA())
         {
             snapshot();
-            if (hspi1.State != HAL_SPI_STATE_BUSY_TX_RX)
-            {
-                HAL_SPI_TransmitReceive_DMA(&hspi1, (uint8_t*)&spi_tx, (uint8_t*)&spi_rx, sizeof(spi_tx));
-            }
             DATA_READY();
+            int data_fetch_timeout = 0x500;
+            while (RECORD_DATA() && data_fetch_timeout) { data_fetch_timeout--;} // busywait until the PC ACKED
         }
         else
+        {
             DATA_NOT_READY();
+        }
 
         if (pending_spi)
         {
             pending_spi = 0;
             idle_counter = 200000;
             process_spi();
-        }
-
-        if (hspi1.State != HAL_SPI_STATE_BUSY_TX_RX)
-        {
-            HAL_SPI_TransmitReceive_DMA(&hspi1, (uint8_t*)&spi_tx, (uint8_t*)&spi_rx, sizeof(spi_tx));
         }
 
         /* shutdown stepgen if no activity */

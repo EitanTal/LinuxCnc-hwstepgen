@@ -12,12 +12,16 @@ extern TIM_HandleTypeDef htim1;
 #define DATA_READY()      (HAL_GPIO_WritePin(DATA_READY_GPIO_Port, DATA_READY_Pin, GPIO_PIN_SET))
 #define DATA_NOT_READY()  (HAL_GPIO_WritePin(DATA_READY_GPIO_Port, DATA_READY_Pin, GPIO_PIN_RESET))
 #define LED_TOGGLE()      LED_GPIO_Port->ODR ^= LED_Pin
-
+#if 1
+#define FAILURE_CONDITION()  for (;;) LED_TOGGLE()
+#else
+#define FAILURE_CONDITION()
+#endif
 enum
 {
     CMD_UPDATE = 'DMC>', //'>CMD',
     CMD_CONFIG = 'GFC>', //'>CFG',
-    CMD_GARBAGE = 'XXXX',
+    CMD_GARBAGE = 'DMCX',
 };
 
 typedef struct
@@ -102,10 +106,12 @@ static void process_spi(void)
 void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
 {
     pending_spi = 1;
-    // re-kickoff. Last CMD must be prepared immediately before the neck kickoff
-    *(uint32_t*)spi_tx = ~(*(uint32_t*)spi_rx);
-    // ? This function commits the first byte of spi_tx, even for a future SPI transaction
-    HAL_SPI_TransmitReceive_DMA(&hspi1, (uint8_t*)&spi_tx, (uint8_t*)&spi_rx, sizeof(spi_tx)); // kickoff the SPI
+    // Race condition: Cannot restart the SPI dma yet, as the DMA might be busy
+}
+
+void HAL_SPI_ErrorCallback(SPI_HandleTypeDef *hspi)
+{
+    FAILURE_CONDITION();
 }
 
 void kernel_main_entry(void)
@@ -138,6 +144,13 @@ void kernel_main_entry(void)
             pending_spi = 0;
             idle_counter = 200000;
             process_spi();
+            // re-kickoff. Last CMD must be prepared immediately before the neck kickoff
+            *(uint32_t*)spi_tx = ~(*(uint32_t*)spi_rx);
+            // This function commits the first byte of spi_tx, even for a future SPI transaction
+            if ( HAL_OK !=  HAL_SPI_TransmitReceive_DMA(&hspi1, (uint8_t*)&spi_tx, (uint8_t*)&spi_rx, sizeof(spi_tx)))
+            {
+                FAILURE_CONDITION();
+            };
         }
 
         /* shutdown stepgen if no activity */

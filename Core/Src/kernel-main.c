@@ -53,11 +53,16 @@ typedef struct
     uint32_t    input;
 } S_TX_REPLY;
 
-volatile uint8_t spi_tx[SPI_TRANSACTION_SIZE]; // volatile because DMA writes to this
-volatile uint8_t spi_rx[SPI_TRANSACTION_SIZE];
+volatile uint8_t totalbuffer_tx[SPI_TRANSACTION_SIZE * 2];
+volatile uint8_t totalbuffer_rx[SPI_TRANSACTION_SIZE * 2];
 
-int pending_spi;
+volatile uint8_t * spi_tx;
+volatile uint8_t * spi_rx;
+
+int pending_spi_1;
+int pending_spi_2;
 uint32_t g_last_cmd;
+int which_half_buffer = 0;
 
 static inline void update_outputs(int new_status)
 {
@@ -78,8 +83,9 @@ static inline void update_pwm_duty(uint32_t pwm12, uint32_t pwm3)
 
 static void reset_spi(void)
 {
+    which_half_buffer = 0;
     HAL_SPI_Abort(&hspi1);
-    HAL_SPI_TransmitReceive_DMA(&hspi1, (uint8_t*)&spi_tx, (uint8_t*)&spi_rx, sizeof(spi_tx));
+    HAL_SPI_TransmitReceive_DMA(&hspi1, (uint8_t*)&totalbuffer_tx, (uint8_t*)&totalbuffer_rx, sizeof(totalbuffer_tx));
 }
 
 static void board_to_idle(void)
@@ -109,7 +115,7 @@ static void snapshot(void)
     a->input = InPortStatus;
 }
 
-static void process_spi(void)
+static int process_spi(void)
 {
     volatile S_RX_PACKET * a = (volatile S_RX_PACKET *)spi_rx;
     volatile S_TX_REPLY * b  = (volatile S_TX_REPLY *)spi_tx;
@@ -137,13 +143,19 @@ static void process_spi(void)
     else
     {
         LED_TOGGLE(); // Debug: Show an unknown command
+        return 0;
     }
+    return 1;
+}
+
+void HAL_SPI_TxRxHalfCpltCallback(SPI_HandleTypeDef *hspi)
+{
+    pending_spi_1 = 1;
 }
 
 void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
 {
-    pending_spi = 1;
-    // Race condition: Cannot restart the SPI dma yet, as the DMA might be busy
+    pending_spi_2 = 1;
 }
 
 void HAL_SPI_ErrorCallback(SPI_HandleTypeDef *hspi)
@@ -154,7 +166,6 @@ void HAL_SPI_ErrorCallback(SPI_HandleTypeDef *hspi)
 void kernel_main_entry(void)
 {
     board_to_idle();
-    //HAL_SPI_TransmitReceive_DMA(&hspi1, (uint8_t*)&spi_tx, (uint8_t*)&spi_rx, sizeof(spi_tx)); // kickoff the SPI
 
     // one-off setup:
     HAL_TIM_Base_Start_IT(&htim6);
@@ -178,18 +189,30 @@ void kernel_main_entry(void)
             DATA_NOT_READY();
         }
 
+        static int pending_spi = 0;
+        if (which_half_buffer == 0 && pending_spi_1)
+        {
+            pending_spi_1 = 0;
+            pending_spi = 1;
+            spi_tx = &totalbuffer_tx[SPI_TRANSACTION_SIZE];
+            spi_rx = &totalbuffer_rx[0];
+        }
+
+        if (which_half_buffer == 1 && pending_spi_2)
+        {
+            pending_spi_2 = 0;
+            pending_spi = 1;
+            spi_tx = &totalbuffer_tx[0];
+            spi_rx = &totalbuffer_rx[SPI_TRANSACTION_SIZE];
+        }
+
         if (pending_spi)
         {
             pending_spi = 0;
-            idle_counter = 200000;
-            process_spi();
-            // re-kickoff. Last CMD must be prepared immediately before the neck kickoff
+            which_half_buffer = !which_half_buffer;
+            if (process_spi()) idle_counter = 200000;
+
             *(uint32_t*)spi_tx = ~(*(uint32_t*)spi_rx);
-            // This function commits the first byte of spi_tx, even for a future SPI transaction
-            if ( HAL_OK !=  HAL_SPI_TransmitReceive_DMA(&hspi1, (uint8_t*)&spi_tx, (uint8_t*)&spi_rx, sizeof(spi_tx)))
-            {
-                FAILURE_CONDITION();
-            };
         }
 
         /* shutdown stepgen if no activity */
@@ -204,7 +227,7 @@ void kernel_main_entry(void)
             while (EXTERNAL_RESET()) {LED_TOGGLE();} // busywait until external reset is cleared
         }
 
-        if (!(counter++ % (idle_counter ? 0x10000 : 0x20000))) {
+        if (!(counter++ % (idle_counter ? 0x2000 : 0x20000))) {
             LED_TOGGLE();
         }
     }

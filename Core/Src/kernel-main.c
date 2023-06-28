@@ -22,7 +22,7 @@ enum
 {
     CMD_UPDATE = 'DMC>', //'>CMD',
     CMD_CONFIG = 'GFC>', //'>CFG',
-    CMD_GARBAGE = 'DMCX',
+    CMD_GARBAGE = 'DAER', //'READ'
 };
 
 typedef struct
@@ -62,7 +62,7 @@ volatile uint8_t * spi_rx;
 int pending_spi_1;
 int pending_spi_2;
 uint32_t g_last_cmd;
-int which_half_buffer = 0;
+uint8_t which_half_buffer = 0;
 
 static inline void update_outputs(int new_status)
 {
@@ -107,7 +107,7 @@ static void hard_reset_board(void)
 
 static void snapshot(void)
 {
-    S_TX_REPLY* a = (S_TX_REPLY*)&spi_tx;
+    S_TX_REPLY* a = (S_TX_REPLY*)spi_tx;
     stepgen_get_position(&a->positions);
     int InPortStatus = IN1_GPIO_Port->IDR;
     InPortStatus = InPortStatus >> 12;
@@ -212,7 +212,10 @@ void kernel_main_entry(void)
             which_half_buffer = !which_half_buffer;
             if (process_spi()) idle_counter = 200000;
 
-            *(uint32_t*)spi_tx = ~(*(uint32_t*)spi_rx);
+            // prepare for future response:
+            uint32_t last_cmd = *(uint32_t*)spi_rx;
+            // 1st byte of spi_tx is always 0xA5
+            *(uint32_t*)spi_tx = ~((last_cmd & 0xFFFFFF00) | 0x5A);
         }
 
         /* shutdown stepgen if no activity */

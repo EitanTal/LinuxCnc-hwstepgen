@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <string.h>
 #include "main.h"
 #include "kernel-stepgen.h"
 
@@ -77,7 +78,7 @@ static inline void update_outputs(int new_status)
 
 static inline void update_pwm_duty(uint32_t pwm12, uint32_t pwm3)
 {
-    // pwm3 is currently unusued, pwm2 (high 16 bits of pwm12) also unused
+    // pwm3 is currently unused, pwm2 (high 16 bits of pwm12) also unused
     htim1.Instance->CCR1 = (pwm12 & 0xFFFF);
 }
 
@@ -108,32 +109,40 @@ static void hard_reset_board(void)
 static void snapshot(void)
 {
     S_TX_REPLY* a = (S_TX_REPLY*)spi_tx;
-    stepgen_get_position(&a->positions);
-    int InPortStatus = IN1_GPIO_Port->IDR;
-    InPortStatus = InPortStatus >> 12;
-    InPortStatus &= 0xF; // PB12...PB15
-    a->input = InPortStatus;
+    if (a)
+    {
+      stepgen_get_position(&a->positions);
+      int InPortStatus = IN1_GPIO_Port->IDR;
+      InPortStatus = InPortStatus >> 12;
+      InPortStatus &= 0xF; // PB12...PB15
+      a->input = InPortStatus;
+    }
 }
 
 static int process_spi(void)
 {
     volatile S_RX_PACKET * a = (volatile S_RX_PACKET *)spi_rx;
-    volatile S_TX_REPLY * b  = (volatile S_TX_REPLY *)spi_tx;
     uint32_t cmd = a->command;
     g_last_cmd = cmd;
     if (cmd == CMD_UPDATE)
     {
-        S_RX_UPDATE aa; //= (S_RX_UPDATE*)&spi_rx;
-        memcpy(&aa, spi_rx, sizeof(aa) );
+        S_RX_UPDATE aa;
+        memcpy((uint8_t*)&aa, (uint8_t*)spi_rx, sizeof(aa) );
         stepgen_update_input(&aa.velocity);
         update_pwm_duty(aa.pwm1, 0);
         update_outputs(aa.output);
     }
     else if (cmd == CMD_CONFIG)
     {
-        S_RX_CONFIG* a = (S_RX_CONFIG*)&spi_rx;
+#if 0
+        S_RX_CONFIG* a = (S_RX_CONFIG*)spi_rx;
+#else
+        uint8_t tmp_buf[32] = {0};
+        memcpy((uint8_t*)tmp_buf, (uint8_t*)spi_rx, 32);
+        S_RX_CONFIG* a = (S_RX_CONFIG*)tmp_buf;
+#endif
         stepgen_update_stepwidth(a->stepwidth);
-        htim1.Instance->ARR = a->pwmfreq;
+        htim1.Instance->ARR = (a->pwmfreq);
     }
     else if (cmd == CMD_GARBAGE)
     {

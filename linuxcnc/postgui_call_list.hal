@@ -4,3 +4,4 @@
 # overwritten when you run stepconf again
 
 source custom_postgui.hal
+source pyvcp.hal

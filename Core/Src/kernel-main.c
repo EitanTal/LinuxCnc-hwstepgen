@@ -67,13 +67,15 @@ uint8_t which_half_buffer = 0;
 
 static inline void update_outputs(int new_status)
 {
-  typedef struct
-  {
-    uint32_t BitsIDontCareAbout : 6;
-    uint32_t BitsOfInterest : 4;
-  } BitsICareAbout;
-  BitsICareAbout * bits = (BitsICareAbout *)&OUT1_GPIO_Port->ODR;
-  bits->BitsOfInterest = new_status;
+  new_status = new_status << 6; // output bits start from 6
+
+  static int old_status = 0;
+
+  int bits_just_turned_on = (~old_status & new_status);
+  int bits_just_turned_off = (old_status & ~new_status);
+
+  OUT1_GPIO_Port->BSRR = (bits_just_turned_on | (bits_just_turned_off << 16));
+  old_status = new_status;
 }
 
 static inline void update_pwm_duty(uint32_t pwm12, uint32_t pwm3)

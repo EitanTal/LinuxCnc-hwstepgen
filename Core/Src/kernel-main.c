@@ -13,7 +13,8 @@ extern TIM_HandleTypeDef htim1;
 #define EXTERNAL_RESET()  (HAL_GPIO_ReadPin(EXT_RESET_GPIO_Port,   EXT_RESET_Pin) == GPIO_PIN_RESET)
 #define DATA_READY()      (HAL_GPIO_WritePin(DATA_READY_GPIO_Port, DATA_READY_Pin, GPIO_PIN_SET))
 #define DATA_NOT_READY()  (HAL_GPIO_WritePin(DATA_READY_GPIO_Port, DATA_READY_Pin, GPIO_PIN_RESET))
-#define LED_TOGGLE()      LED_GPIO_Port->ODR ^= LED_Pin
+static int ledstatus = 0;
+#define LED_TOGGLE()      LED_GPIO_Port->BSRR = ((++ledstatus % 2) ? LED_Pin : LED_Pin << 16)
 #if 0
 #define FAILURE_CONDITION()  for (;;) LED_TOGGLE()
 #else

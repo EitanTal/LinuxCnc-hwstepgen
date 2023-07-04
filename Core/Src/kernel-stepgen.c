@@ -3,7 +3,7 @@
 
 #define TOGGLE_FAST() LED_GPIO_Port->ODR ^= LED_Pin
 
-#define STEPWIDTH_DEFAULT 1
+#define STEPWIDTH_DEFAULT 2
 #define DIRECTION_SETUP_CYCLES 1 // currently, only a value of 1 is supported
 #define HALFSTEP_MASK (1<<22)
 #define DIR_MASK (1<<31)

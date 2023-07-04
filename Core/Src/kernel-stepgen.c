@@ -4,6 +4,7 @@
 #define TOGGLE_FAST() LED_GPIO_Port->ODR ^= LED_Pin
 
 #define STEPWIDTH_DEFAULT 1
+#define DIRECTION_SETUP_CYCLES 1 // currently, only a value of 1 is supported
 #define HALFSTEP_MASK (1<<22)
 #define DIR_MASK (1<<31)
 
@@ -88,6 +89,16 @@ void stepgen_update_input(const volatile int32_t *buf)
     stepgen_input.velocity[1] = buf[1];
     stepgen_input.velocity[2] = buf[2];
     stepgen_input.velocity[3] = buf[3];
+
+        /* check for direction change */
+        for (int i = 0; i < 4; i++) {
+        if (!dirchange[i]) {
+            if ((stepgen_input.velocity[i] ^ oldvel[i]) & DIR_MASK) {
+                dirchange[i] = DIRECTION_SETUP_CYCLES;
+                oldvel[i] = stepgen_input.velocity[i];
+            }
+        }
+        }
     __enable_irq();
 }
 
@@ -131,13 +142,14 @@ void kernel_update(void)
         /* check if a step pulse can be generated */
         stepready = (position[i] ^ oldpos[i]) & HALFSTEP_MASK;
 
-        /* generate a step pulse */
-        if (stepready) {
+        /* request a new step pulse. Do not request a new pulse if direction hasn't changed yet */
+        if (stepready && !dirchange[i]) {
             oldpos[i] = position[i];
             stepwidth[i] =  step_width + 1;
             do_step_hi[i] = 0;
         }
 
+        /* pulse progress */
         if (stepwidth[i]) {
             if (--stepwidth[i]) {
                 step_hi(i);
@@ -147,15 +159,7 @@ void kernel_update(void)
             }
         }
 
-        /* check for direction change */
-        if (!dirchange[i]) {
-            if ((stepgen_input.velocity[i] ^ oldvel[i]) & DIR_MASK) {
-                dirchange[i] = 1;
-                oldvel[i] = stepgen_input.velocity[i];
-            }
-        }
-
-        /* generate direction pulse after step hi-lo transition */
+        /* update direction signal after step hi-lo transition */
         if (do_step_hi[i] && dirchange[i]) {
             dirchange[i] = 0;
             if (oldvel[i] >= 0)

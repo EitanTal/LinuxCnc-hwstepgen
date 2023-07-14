@@ -12,3 +12,6 @@ EWARM/LinuxCnc-hwstepgen/List/
 EWARM/settings/
 *.ninja_deps
 *.ninja_log
+EWARM/LinuxCnc-hwstepgen-u575/List/
+EWARM/LinuxCnc-hwstepgen-u575/BrowseInfo/
+EWARM/LinuxCnc-hwstepgen-u575/Exe/

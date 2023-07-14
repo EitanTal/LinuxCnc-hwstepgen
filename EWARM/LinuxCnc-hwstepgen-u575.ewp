@@ -2,7 +2,7 @@
 <project>
   <fileVersion>3</fileVersion>
   <configuration>
-    <name>LinuxCnc-hwstepgen</name>
+    <name>LinuxCnc-hwstepgen-u575</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -16,19 +16,19 @@
         <debug>1</debug>
         <option>
           <name>BrowseInfoPath</name>
-          <state>LinuxCnc-hwstepgen\BrowseInfo</state>
+          <state>LinuxCnc-hwstepgen-u575\BrowseInfo</state>
         </option>
         <option>
           <name>ExePath</name>
-          <state>LinuxCnc-hwstepgen/Exe</state>
+          <state>LinuxCnc-hwstepgen-u575/Exe</state>
         </option>
         <option>
           <name>ObjPath</name>
-          <state>LinuxCnc-hwstepgen/Obj</state>
+          <state>LinuxCnc-hwstepgen-u575/Obj</state>
         </option>
         <option>
           <name>ListPath</name>
-          <state>LinuxCnc-hwstepgen/List</state>
+          <state>LinuxCnc-hwstepgen-u575/List</state>
         </option>
         <option>
           <name>GEndianMode</name>
@@ -62,7 +62,7 @@
         </option>
         <option>
           <name>RTDescription</name>
-          <state>A complete configuration of the C/C++14 runtime library. Full locale interface, C locale, file descriptor support, multibytes in printf and scanf, and hex floats in strtod.</state>
+          <state>Use the full configuration of the C/C++ runtime library. Full locale interface, C locale, file descriptor support, multibytes in printf and scanf, and hex floats in strtod.</state>
         </option>
         <option>
           <name>OGProductVersion</name>
@@ -70,11 +70,11 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>9.32.1.54977</state>
+          <state>8.50.1.24770</state>
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state>STM32F103RC	ST STM32F103RC</state>
+          <state>STM32U575RI	ST STM32U575RI</state>
         </option>
         <option>
           <name>GenLowLevelInterface</name>
@@ -99,7 +99,7 @@
         <option>
           <name>GBECoreSlave</name>
           <version>32</version>
-          <state>38</state>
+          <state>0</state>
         </option>
         <option>
           <name>OGUseCmsis</name>
@@ -116,21 +116,21 @@
         <option>
           <name>CoreVariant</name>
           <version>32</version>
-          <state>38</state>
+          <state>39</state>
         </option>
         <option>
           <name>GFPUDeviceSlave</name>
-          <state>STM32F103RC	ST STM32F103RC</state>
+          <state></state>
         </option>
         <option>
           <name>FPU2</name>
           <version>0</version>
-          <state>0</state>
+          <state>6</state>
         </option>
         <option>
           <name>NrRegs</name>
           <version>0</version>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>NEON</name>
@@ -139,7 +139,7 @@
         <option>
           <name>GFPUCoreSlave2</name>
           <version>32</version>
-          <state>38</state>
+          <state>39</state>
         </option>
         <option>
           <name>OGCMSISPackSelectDevice</name>
@@ -201,7 +201,7 @@
         </option>
         <option>
           <name>BuildFilesPath</name>
-          <state>LinuxCnc-hwstepgen</state>
+          <state>LinuxCnc-hwstepgen-u575</state>
         </option>
         <option>
           <name>PointerAuthentication</name>
@@ -222,12 +222,12 @@
         <debug>1</debug>
         <option>
           <name>CCOptimizationNoSizeConstraints</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>CCDefines</name>
           <state>USE_HAL_DRIVER</state>
-          <state>STM32F103xE</state>
+          <state>STM32U575xx</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -349,9 +349,9 @@
         <option>
           <name>CCIncludePath2</name>
           <state>$PROJ_DIR$/../Core/Inc</state>
-          <state>$PROJ_DIR$/../Drivers/STM32F1xx_HAL_Driver/Inc</state>
-          <state>$PROJ_DIR$/../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy</state>
-          <state>$PROJ_DIR$/../Drivers/CMSIS/Device/ST/STM32F1xx/Include</state>
+          <state>$PROJ_DIR$/../Drivers/STM32U5xx_HAL_Driver/Inc</state>
+          <state>$PROJ_DIR$/../Drivers/STM32U5xx_HAL_Driver/Inc/Legacy</state>
+          <state>$PROJ_DIR$/../Drivers/CMSIS/Device/ST/STM32U5xx/Include</state>
           <state>$PROJ_DIR$/../Drivers/CMSIS/Include</state>
         </option>
         <option>
@@ -373,7 +373,7 @@
         <option>
           <name>CCOptStrategy</name>
           <version>0</version>
-          <state>2</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCOptLevelSlave</name>
@@ -426,7 +426,7 @@
         <option>
           <name>CCOptStrategySlave</name>
           <version>0</version>
-          <state>2</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCGuardCalls</name>
@@ -596,7 +596,7 @@
         </option>
         <option>
           <name>AOutputFile</name>
-          <state>$FILE_BNAME$.o</state>
+          <state></state>
         </option>
         <option>
           <name>ALimitErrorsCheck</name>
@@ -650,7 +650,7 @@
         </option>
         <option>
           <name>OOCOutputFile</name>
-          <state>LinuxCnc-hwstepgen.hex</state>
+          <state>LinuxCnc-hwstepgen-u575.hex</state>
         </option>
         <option>
           <name>OOCCommandLineProducer</name>
@@ -689,7 +689,7 @@
         <debug>1</debug>
         <option>
           <name>IlinkOutputFile</name>
-          <state>LinuxCnc-hwstepgen.out</state>
+          <state>LinuxCnc-hwstepgen-u575.out</state>
         </option>
         <option>
           <name>IlinkLibIOConfig</name>
@@ -761,7 +761,7 @@
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>$PROJ_DIR$/stm32f103xe_flash.icf</state>
+          <state>$PROJ_DIR$/stm32u575xx_flash.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
@@ -994,7 +994,7 @@
         </option>
         <option>
           <name>IlinkTrustzoneImportLibraryOut</name>
-          <state>LinuxCnc-hwstepgen_import_lib.o</state>
+          <state></state>
         </option>
         <option>
           <name>OILinkExtraOption</name>
@@ -1086,7 +1086,7 @@
     <group>
       <name>EWARM</name>
       <file>
-        <name>$PROJ_DIR$\startup_stm32f103xe.s</name>
+        <name>$PROJ_DIR$\startup_stm32u575xx.s</name>
       </file>
     </group>
     <group>
@@ -1094,22 +1094,13 @@
       <group>
         <name>Core</name>
         <file>
-          <name>$PROJ_DIR$\..\Core\Src\hw-stepgen.c</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\Core\Src\kernel-main.c</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$\..\Core\Src\kernel-stepgen.c</name>
-        </file>
-        <file>
           <name>$PROJ_DIR$\..\Core\Src\main.c</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\Core\Src\stm32f1xx_it.c</name>
+          <name>$PROJ_DIR$\..\Core\Src\stm32u5xx_it.c</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\..\Core\Src\stm32f1xx_hal_msp.c</name>
+          <name>$PROJ_DIR$\..\Core\Src\stm32u5xx_hal_msp.c</name>
         </file>
       </group>
     </group>
@@ -1119,55 +1110,76 @@
     <group>
       <name>CMSIS</name>
       <file>
-        <name>$PROJ_DIR$\..\Core\Src\system_stm32f1xx.c</name>
+        <name>$PROJ_DIR$\..\Core\Src\system_stm32u5xx.c</name>
       </file>
     </group>
     <group>
-      <name>STM32F1xx_HAL_Driver</name>
+      <name>STM32U5xx_HAL_Driver</name>
       <file>
-        <name>$PROJ_DIR$\..\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_gpio_ex.c</name>
+        <name>$PROJ_DIR$\..\Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_cortex.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_spi.c</name>
+        <name>$PROJ_DIR$\..\Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_dcache.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal.c</name>
+        <name>$PROJ_DIR$\..\Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_rcc.c</name>
+        <name>$PROJ_DIR$\..\Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_i2c.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_rcc_ex.c</name>
+        <name>$PROJ_DIR$\..\Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_i2c_ex.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_gpio.c</name>
+        <name>$PROJ_DIR$\..\Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_rcc.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_dma.c</name>
+        <name>$PROJ_DIR$\..\Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_rcc_ex.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_cortex.c</name>
+        <name>$PROJ_DIR$\..\Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_flash.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_pwr.c</name>
+        <name>$PROJ_DIR$\..\Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_flash_ex.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_flash.c</name>
+        <name>$PROJ_DIR$\..\Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_gpio.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_flash_ex.c</name>
+        <name>$PROJ_DIR$\..\Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_dma.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_exti.c</name>
+        <name>$PROJ_DIR$\..\Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_dma_ex.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_tim.c</name>
+        <name>$PROJ_DIR$\..\Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_exti.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_tim_ex.c</name>
+        <name>$PROJ_DIR$\..\Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_pwr.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_uart.c</name>
+        <name>$PROJ_DIR$\..\Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_pwr_ex.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_gtzc.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_icache.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_lptim.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_spi.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_spi_ex.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_tim.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_tim_ex.c</name>
       </file>
     </group>
   </group>

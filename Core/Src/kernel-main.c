@@ -3,9 +3,13 @@
 #include "main.h"
 #include "kernel-stepgen.h"
 
+#define KERNEL_TIMER htim7
+#define SPINDLE_TIMER hlptim2
+
 extern SPI_HandleTypeDef hspi1;
-extern TIM_HandleTypeDef htim6;
-extern TIM_HandleTypeDef htim1;
+extern TIM_HandleTypeDef KERNEL_TIMER;
+extern LPTIM_HandleTypeDef SPINDLE_TIMER;
+
 
 #define SPI_TRANSACTION_SIZE 32
 
@@ -82,7 +86,7 @@ static inline void update_outputs(int new_status)
 static inline void update_pwm_duty(uint32_t pwm12, uint32_t pwm3)
 {
     // pwm3 is currently unused, pwm2 (high 16 bits of pwm12) also unused
-    htim1.Instance->CCR1 = (pwm12 & 0xFFFF);
+    SPINDLE_TIMER.Instance->CCR1 = (pwm12 & 0xFFFF);
 }
 
 static void reset_spi(void)
@@ -145,7 +149,7 @@ static int process_spi(void)
         S_RX_CONFIG* a = (S_RX_CONFIG*)tmp_buf;
 #endif
         stepgen_update_stepwidth(a->stepwidth);
-        htim1.Instance->ARR = (a->pwmfreq);
+        SPINDLE_TIMER.Instance->ARR = (a->pwmfreq);
     }
     else if (cmd == CMD_GARBAGE)
     {
@@ -180,10 +184,10 @@ void kernel_main_entry(void)
     board_to_idle();
 
     // one-off setup:
-    HAL_TIM_Base_Start_IT(&htim6);
-    HAL_TIM_Base_Start(&htim1);
-    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-    htim1.Instance->CCER = 0x1;
+    HAL_TIM_Base_Start_IT(&KERNEL_TIMER);
+    //HAL_TIM_Base_Start(&SPINDLE_TIMER);
+    HAL_LPTIM_PWM_Start(&SPINDLE_TIMER, LPTIM_CHANNEL_1);
+    SPINDLE_TIMER.Instance->CCR1 = 0x1;
 
     int counter = 0;
     int idle_counter = 0;

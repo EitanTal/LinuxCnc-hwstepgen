@@ -20,6 +20,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32u5xx_it.h"
+#include "kernel-stepgen.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 /* USER CODE END Includes */
@@ -62,6 +63,7 @@ extern DMA_NodeTypeDef Node_GPDMA1_Channel10;
 extern DMA_QListTypeDef List_GPDMA1_Channel10;
 extern DMA_HandleTypeDef handle_GPDMA1_Channel10;
 extern SPI_HandleTypeDef hspi1;
+extern TIM_HandleTypeDef htim7;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -203,6 +205,22 @@ void SysTick_Handler(void)
 /* For the available peripheral interrupt handler names,                      */
 /* please refer to the startup file (startup_stm32u5xx.s).                    */
 /******************************************************************************/
+
+/**
+  * @brief This function handles TIM7 global interrupt.
+  */
+void TIM7_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM7_IRQn 0 */
+  __HAL_TIM_CLEAR_IT(&htim7, TIM_IT_UPDATE);
+  kernel_update();
+  return;
+  /* USER CODE END TIM7_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim7);
+  /* USER CODE BEGIN TIM7_IRQn 1 */
+
+  /* USER CODE END TIM7_IRQn 1 */
+}
 
 /**
   * @brief This function handles SPI1 global interrupt.

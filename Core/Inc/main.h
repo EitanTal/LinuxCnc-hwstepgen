@@ -97,16 +97,14 @@ void Error_Handler(void);
 #define OUT4_GPIO_Port GPIOC
 #define SPINDLE_PWM_Pin GPIO_PIN_8
 #define SPINDLE_PWM_GPIO_Port GPIOA
-#define EXT_RESET_Pin GPIO_PIN_15
-#define EXT_RESET_GPIO_Port GPIOA
 #define DATA_REQUEST_Pin GPIO_PIN_12
 #define DATA_REQUEST_GPIO_Port GPIOC
 #define DATA_READY_Pin GPIO_PIN_2
 #define DATA_READY_GPIO_Port GPIOD
-#define JOY7_Pin GPIO_PIN_8
-#define JOY7_GPIO_Port GPIOB
-#define JOY8_Pin GPIO_PIN_9
-#define JOY8_GPIO_Port GPIOB
+#define SPI1_MOSI_ALIAS_Pin GPIO_PIN_8
+#define SPI1_MOSI_ALIAS_GPIO_Port GPIOB
+#define EXT_RESET_Pin GPIO_PIN_9
+#define EXT_RESET_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 typedef __uint32_t uint32_t; // stupid VSCODE

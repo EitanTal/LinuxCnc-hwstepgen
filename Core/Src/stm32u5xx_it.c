@@ -20,9 +20,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32u5xx_it.h"
-#include "kernel-stepgen.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "kernel-stepgen.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

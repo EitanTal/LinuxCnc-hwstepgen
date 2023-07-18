@@ -193,6 +193,7 @@ void kernel_main_entry(void)
     int idle_counter = 0;
     for (;;)
     {
+#if 1
         if (RECORD_DATA())
         {
             snapshot();
@@ -204,7 +205,7 @@ void kernel_main_entry(void)
         {
             DATA_NOT_READY();
         }
-
+#endif
         static int pending_spi = 0;
         if (which_half_buffer == 0 && pending_spi_1)
         {
@@ -239,13 +240,13 @@ void kernel_main_entry(void)
             if (--idle_counter) { ; } // still going
             else { board_to_idle(); }
         }
-
+#if 0
         if (EXTERNAL_RESET())
         {
             hard_reset_board();
             while (EXTERNAL_RESET()) {LED_TOGGLE();} // busywait until external reset is cleared
         }
-
+#endif
         if (!(counter++ % (idle_counter ? 0x2000 : 0x20000))) {
             LED_TOGGLE();
         }

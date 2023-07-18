@@ -273,7 +273,7 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
     NodeConfig.Init.Request = GPDMA1_REQUEST_SPI1_TX;
     NodeConfig.Init.BlkHWRequest = DMA_BREQ_SINGLE_BURST;
     NodeConfig.Init.Direction = DMA_MEMORY_TO_PERIPH;
-    NodeConfig.Init.SrcInc = DMA_SINC_FIXED;
+    NodeConfig.Init.SrcInc = DMA_SINC_INCREMENTED;
     NodeConfig.Init.DestInc = DMA_DINC_FIXED;
     NodeConfig.Init.SrcDataWidth = DMA_SRC_DATAWIDTH_BYTE;
     NodeConfig.Init.DestDataWidth = DMA_DEST_DATAWIDTH_BYTE;

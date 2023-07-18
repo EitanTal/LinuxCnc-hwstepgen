@@ -1,38 +1,41 @@
-
-
 Joystick port:
-
-1   3   5   7   9
 2   4   6   8  10
-
+1   3   5   7   9
 
 PIN-to-joystick:   (SPI)
-55 - PB3  -  4     (SPI_CLK)
-56 - PB4  -  3     (SPI_MISO)
-57 - PB5  -  ?     (SPI_MOSI)
+55 - PB3  -  3     (SPI_CLK)
+56 - PB4  -  4     (SPI_MISO)
+57 - PB5  -  ? - 8 - PB8    (SPI_MOSI)
 
 
 PIN-to-joystick:   (UART)
-58 - PB6  -  5     (UART-TX)
-59 - PB7  -  6     (UART-RX)
+58 - PB6  -  6     (UART-TX)
+59 - PB7  -  5     (UART-RX)
 60 - Boot0
 
 Other joystick pins:
-54 - PD2   - 1     GREEN-DATA READY
-53 - PC12  - 2     BLUE -DATA REQUEST
-61 - PB8   - 7
-62 - PB9   - 8
+54 - PD2   - 2     GREEN-DATA READY
+53 - PC12  - 1     BLUE -DATA REQUEST
+61 - PB8   - 8     Aliased to SPI_MOSI, PB5
+62 - PB9   - 7     EXT_RESET
 
-GND                         - 10
-shared resistors (pullup??) - 9
+GND                         - 9
+shared resistors (pullup??) - 10
 
 
-SPI connector          <->         RSPI pin       GPIO
-RED   - JOY3 - SPI_MISO            21             9
-blue  - xxxx - SPI_NSS (PA15)      26             7 (NC)
-blue  - xxxx - SPI_MOSI            19             10
-GREEN - JOY4 - SPI_CLK             23             11
-BLACK - xxxx - GND         6,9,14,20,25,30,34,39
-(NC)
-GREEN - JOY1 - DATA READY          22             25
-BLUE  - JOY2 - DATA REQUEST        16             23
+SPI connector      <->     RSPI pin       GPIO
+JOY1 - DATA REQUEST        16             23
+JOY2 - DATA READY          22             25
+JOY3 - SPI_CLK             23             11
+JOY4 - SPI_MISO            21             9
+JOY7 - EXTRESET            26             7 (NC)
+JOY8 - SPI_MOSI            19             10
+JOY9 - GND                 20     (Others: 6,9,14,20,25,30,34,39)
+Unused: 5, 6, 10, 7
+
+JTAG port: (https://learn.sparkfun.com/tutorials/arm-programming/jtag-and-swd)
+
+3V3 Pin1
+GND Pin4
+SIO Pin7
+CLK Pin9

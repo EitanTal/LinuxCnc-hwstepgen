@@ -31,15 +31,23 @@
 // To mitigate, we add a multiplier. Each minislot is now worth 128 points.
 // We have a running number called Tally. When the tally reaches or exceeds the "Mark", we send a pulse & decrement
 
+// TODO:
+// Initial Tally divided by Mark, is effectively phase. Is there an advantage to starting (and ending) the phase at 50%?
+
 #include <stdint.h>
 #include <stdbool.h>
 #if 1
 #include <stdio.h> // ! for testing
 #endif
 
-// Pre-calculated:
+
+#define AXES 4
+
+
 #define MAX_PULSES_PER_TIMESLOT 159
-static int MarksPerPulses[MAX_PULSES_PER_TIMESLOT+1] = {
+
+// Pre-calculated:
+static int MarksPerPulses[MAX_PULSES_PER_TIMESLOT+1] = {  // Calculated for window size of (317 * 128)
 	65535, 40576, 20288, 13525, 10144, 8115, 6762, 5796, 5072, 4508, 4057, 3688, 3381, 3121, 2898, 2705, 2536, 2386, 2254, 2135,
 	2028, 1932, 1844, 1764, 1690, 1623, 1560, 1502, 1449, 1399, 1352, 1308, 1268, 1229, 1193, 1159, 1127, 1096, 1067, 1040,
 	1014, 989, 966, 943, 922, 901, 882, 863, 845, 828, 811, 795, 780, 765, 751, 737, 724, 711, 699, 687, 676, 665, 654, 644,
@@ -58,8 +66,10 @@ static const int Minislot_LongCycle   = MinislotsPerTimeframe + 1;
 
 // Data about the current timeslot
 static int CurrentMinislot = 0;
-static int Mark = 0;
-static int Tally = 0;
+static int Mark[AXES] = {0};
+static int Direction[AXES] = {0};
+static int Tally[AXES] = {0};
+static int TotalPulses[AXES] = {0};
 static bool ShortCycle = false;
 static bool LongCycle = false;
 
@@ -70,32 +80,52 @@ int pulsesForThisTimeframe = 0;
 int pulsesInTimeframe = 0;
 #endif
 
-void SignalHigh(void);
-void SignalLow(void);
-void NextTimeframe(void);
+static inline void SignalHigh(int axis);
+static inline void SignalLow(int axis);
+static inline void DirectionHigh(int axis);
+static inline void DirectionLow(int axis);
+
+static inline void NextTimeframe(void);
 
 void update(void)
 {
-	if (CurrentMinislot == 0)
+	if (CurrentMinislot == 0) // Adjust direction pins
 	{
-		// Adjust direction pins
+		for (int i = 0; i < AXES; i++)
+		{
+			if (Direction[i] < 0)
+			{
+				DirectionHigh(i);
+			}
+			else
+			{
+				DirectionLow(i);
+			}
+		}
 	}
 	else if (CurrentMinislot < Minislot_PulseArea)
 	{
-		Tally += PointsPerMinislot;
-		if (Tally >= Mark)
+		for (int i = 0; i < AXES; i++)
 		{
-			Tally -= Mark;
-			SignalHigh();
-		}
-		else
-		{
-			SignalLow();
+			Tally[i] += PointsPerMinislot;
+			if (Tally[i] >= Mark[i])
+			{
+				Tally[i] -= Mark[i];
+				SignalHigh(i);
+				TotalPulses[i] += Direction[i];
+			}
+			else
+			{
+				SignalLow(i);
+			}
 		}
 	}
 	else if (CurrentMinislot < Minislot_ShortCycle)
 	{
-	    SignalLow();
+		for (int i = 0; i < AXES; i++)
+		{
+	    	SignalLow(i);
+		}
 		if (ShortCycle)	NextTimeframe();
 	}
 	else if (CurrentMinislot < Minislot_NormalCycle)
@@ -112,8 +142,11 @@ void update(void)
 void NextTimeframe(void)
 {
 	CurrentMinislot = -1;
-	Tally = 0;
-	Mark = MarksPerPulses[StepsForNextTimeframe]; // ! TEST actually 24 = 1696
+	for (int i = 0; i < AXES; i++)
+	{
+		Tally[i] = 0;
+		Mark[i] = MarksPerPulses[StepsForNextTimeframe];
+	}
 	#if 1
 	pulsesForThisTimeframe = StepsForNextTimeframe;
 	printf("NextTimeframe() . Pulses sent in this one: %d\n", pulsesInTimeframe);
@@ -154,7 +187,7 @@ static inline void dir_lo(int axis)
 #include <stdio.h> // ! for testing
 static int pinstatus = 0;
 
-void SignalHigh(void)
+void SignalHigh(int axis)
 {
 	if (!pinstatus)
 	{
@@ -162,7 +195,7 @@ void SignalHigh(void)
 	}
 	pinstatus = 1;
 }
-void SignalLow(void)
+void SignalLow(int axis)
 {
 	if (pinstatus) 
 	{
@@ -192,7 +225,6 @@ int main()
 	StepsForNextTimeframe = 0;
 	NextTimeframe(); CurrentMinislot++;
 	//
-	Mark = MarksPerPulses[StepsForNextTimeframe];
 	for (int i = 0; i < MAX_PULSES_PER_TIMESLOT; i++)
 	{
 		for (int j = 0; j < Minislot_NormalCycle; j++)

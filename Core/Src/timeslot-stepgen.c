@@ -38,8 +38,15 @@
 #endif
 
 // Pre-calculated:
-#define MAX_PULSES_PER_TIMESLOT 30
-static int MarksPerPulses[MAX_PULSES_PER_TIMESLOT] = {0};
+#define MAX_PULSES_PER_TIMESLOT 159
+static int MarksPerPulses[MAX_PULSES_PER_TIMESLOT+1] = {
+	65535, 40576, 20288, 13525, 10144, 8115, 6762, 5796, 5072, 4508, 4057, 3688, 3381, 3121, 2898, 2705, 2536, 2386, 2254, 2135,
+	2028, 1932, 1844, 1764, 1690, 1623, 1560, 1502, 1449, 1399, 1352, 1308, 1268, 1229, 1193, 1159, 1127, 1096, 1067, 1040,
+	1014, 989, 966, 943, 922, 901, 882, 863, 845, 828, 811, 795, 780, 765, 751, 737, 724, 711, 699, 687, 676, 665, 654, 644,
+	634, 624, 614, 605, 596, 588, 579, 571, 563, 555, 548, 541, 533, 526, 520, 513, 507, 500, 494, 488, 483, 477, 471, 466,
+	461, 455, 450, 445, 441, 436, 431, 427, 422, 418, 414, 409, 405, 401, 397, 393, 390, 386, 382, 379, 375, 372, 368, 365,
+	362, 359, 355, 352, 349, 346, 343, 340, 338, 335, 332, 329, 327, 324, 322, 319, 317, 314, 312, 309, 307, 305, 302, 300,
+	298, 296, 294, 291, 289, 287, 285, 283, 281, 279, 277, 276, 274, 272, 270, 268, 266, 265, 263, 261, 260, 258, 256, 0};
 static const int PointsPerMinislot = 128;
 
 static const int MinislotsPerTimeframe = 320;
@@ -60,6 +67,7 @@ static int StepsForNextTimeframe = 0;
 
 #if 1
 int pulsesForThisTimeframe = 0;
+int pulsesInTimeframe = 0;
 #endif
 
 void SignalHigh(void);
@@ -108,7 +116,8 @@ void NextTimeframe(void)
 	Mark = MarksPerPulses[StepsForNextTimeframe]; // ! TEST actually 24 = 1696
 	#if 1
 	pulsesForThisTimeframe = StepsForNextTimeframe;
-	printf("NextTimeframe()\n");
+	printf("NextTimeframe() . Pulses sent in this one: %d\n", pulsesInTimeframe);
+	pulsesInTimeframe = 0;
 	#endif
 }
 
@@ -144,14 +153,22 @@ static inline void dir_lo(int axis)
 #else
 #include <stdio.h> // ! for testing
 static int pinstatus = 0;
+
 void SignalHigh(void)
 {
-	if (!pinstatus) printf("SignalHigh() at %d (%d) (Next: %d)\n", CurrentMinislot, pulsesForThisTimeframe, StepsForNextTimeframe);
+	if (!pinstatus)
+	{
+		//printf("SignalHigh() at %d (%d) (Next: %d)\n", CurrentMinislot, pulsesForThisTimeframe, StepsForNextTimeframe);
+	}
 	pinstatus = 1;
 }
 void SignalLow(void)
 {
-	if (pinstatus) printf("SignalLow() at %d (%d) (Next: %d)\n", CurrentMinislot, pulsesForThisTimeframe, StepsForNextTimeframe);
+	if (pinstatus) 
+	{
+		//printf("SignalLow() at %d (%d) (Next: %d)\n", CurrentMinislot, pulsesForThisTimeframe, StepsForNextTimeframe);
+		pulsesInTimeframe++;
+	}
 	pinstatus = 0;
 }
 #endif
@@ -176,13 +193,16 @@ int main()
 	NextTimeframe(); CurrentMinislot++;
 	//
 	Mark = MarksPerPulses[StepsForNextTimeframe];
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < MAX_PULSES_PER_TIMESLOT; i++)
 	{
-		for (int j = 0; j < Minislot_LongCycle; j++)
+		for (int j = 0; j < Minislot_NormalCycle; j++)
 		{
+			if (CurrentMinislot == Minislot_NormalCycle/2)
+			{
+				StepsForNextTimeframe = i;
+			}
 			update();
 		}
-		StepsForNextTimeframe = i;
 	}
 }
 

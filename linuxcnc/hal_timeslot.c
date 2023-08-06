@@ -76,7 +76,6 @@ static rtapi_s64 accum[NUMAXES] = { 0 };		/* 64 bit DDS accumulator */
 static void read_spi(void *arg, long period);
 static void write_spi(void *arg, long period);
 static void update(void *arg, long period);
-void transfer_data();
 static void reset_board();
 static int map_gpio_and_spi();
 static void setup_gpio();
@@ -136,32 +135,6 @@ fail_errno:
     return r;
 }
 
-void spi_exchange(void)
-{
-    static struct spi_ioc_transfer t =
-	{
-		.bits_per_word = 8,
-		.cs_change = 0,
-		.delay_usecs = 0,
-		.len = 32,
-		.pad = 0,
-		//.rx_buf = (uintptr_t)&rxBuf,
-		.rx_nbits = 0,
-		.speed_hz = 16000000,
-		//.tx_buf = (uintptr_t)&txBuf,
-		.tx_nbits = 0,
-		.word_delay_usecs = 0
-	};
-	t.rx_buf = (uintptr_t)&rxBuf;
-	t.tx_buf = (uintptr_t)&txBuf;
-
-    int r = ioctl(mem_fd_spi, SPI_IOC_MESSAGE(1), &t);
-    if(r < 0) {
-        rtapi_print_msg(RTAPI_MSG_ERR,
-            "PICNC: SPI_IOC_MESSAGE: %s\n", strerror(errno));
-    }
-}
-
 int rtapi_app_main(void)
 {
 	char name[HAL_NAME_LEN + 1];
@@ -200,7 +173,7 @@ int rtapi_app_main(void)
 	txBuf[0] = 0x4746433E;			/* this is config data (>CFG) */
 	txBuf[1] = stepwidth;
 	txBuf[2] = pwm_period;
-	transfer_data();			/* send config data */
+	write_spi(NULL, 0);			/* send config data */
 
 	max_vel = BASEFREQ/(4.0 * stepwidth);	/* calculate velocity limit */
 
@@ -369,7 +342,7 @@ static void read_spi(void *arg, long period)
 	/* clear request */
 	BCM2835_GPCLR0 = (1l << 23);
 #endif
-	if (timeout) transfer_data();
+	if (timeout) write_spi(NULL, 0);
 
 	/* sanity check: last reported received command was >CMD, or a one-off >CFG */
 	if ((rxBuf[0] & 0xFFFFFF00) == (0x444D43FF ^ ~0)) {
@@ -417,7 +390,28 @@ static void read_spi(void *arg, long period)
 
 static void write_spi(void *arg, long period)
 {
-	transfer_data();
+    static struct spi_ioc_transfer t =
+    {
+        .bits_per_word = 8,
+        .cs_change = 0,
+        .delay_usecs = 0,
+        .len = 32,
+        .pad = 0,
+        //.rx_buf = (uintptr_t)&rxBuf,
+        .rx_nbits = 0,
+        .speed_hz = 16000000,
+        //.tx_buf = (uintptr_t)&txBuf,
+        .tx_nbits = 0,
+        .word_delay_usecs = 0
+    };
+    t.rx_buf = (uintptr_t)&rxBuf;
+    t.tx_buf = (uintptr_t)&txBuf;
+
+    int r = ioctl(mem_fd_spi, SPI_IOC_MESSAGE(1), &t);
+    if(r < 0) {
+        rtapi_print_msg(RTAPI_MSG_ERR,
+            "PICNC: SPI_IOC_MESSAGE: %s\n", strerror(errno));
+    }
 }
 
 static inline void update_outputs(data_t *dat)
@@ -551,37 +545,6 @@ static void update(void *arg, long period)
 	txBuf[0] = 0x444D433E;
 }
 
-void transfer_data()
-{
-#if 0	
-	char *buf;
-	int i;
-
-	/* activate transfer */
-	BCM2835_SPICS = SPI_CS_TA;
-
-	/* send txBuf */
-	buf = (char *)txBuf;
-	for (i=0; i<SPIBUFSIZE; i++) {
-		BCM2835_SPIFIFO = *buf++;
-	}
-
-	/* wait until transfer is finished */
-	while (!(BCM2835_SPICS & SPI_CS_DONE));
-
-	/* clear DONE bit */
-	BCM2835_SPICS = SPI_CS_DONE;
-
-	/* read buffer */
-	buf = (char *)rxBuf;
-	for (i=0; i<SPIBUFSIZE; i++) {
-		*buf++ = BCM2835_SPIFIFO;
-	}
-#else
-	spi_exchange();
-#endif
-}
-
 static int setup_gpiomem_access(void)
 {
   if ((mem_fd = open("/dev/gpiomem", O_RDWR|O_SYNC)) < 0) {
@@ -605,25 +568,6 @@ static int setup_gpiomem_access(void)
 
 static int setup_spimem_access(void)
 {
-	#if 0
-  if ((mem_fd_spi = open("/dev/spidev0.0", O_RDWR|O_SYNC)) < 0) {
-    rtapi_print_msg(RTAPI_MSG_ERR,"HAL_PI_GPIO: can't open /dev/spidev0.0:  %d - %s\n"
-        "If the error is 'permission denied' then try adding the user who runs\n"
-        "LinuxCNC to the gpio group: sudo gpasswd -a username gpio\n", errno, strerror(errno));
-    return -1;
-  }
-
-  spi = mmap(NULL, BCM2835_BLOCK_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, mem_fd_spi, 0);
-
-  if (spi == MAP_FAILED) {
-    close(mem_fd_spi);
-    mem_fd_spi = -1;
-    rtapi_print_msg(RTAPI_MSG_ERR, "HAL_PICNC: mmap failed: %d - %s\n", errno, strerror(errno));
-    return -1;
-  }
-
-  return 0;
-  #else
   mem_fd_spi = spidev_open_and_configure(spidev_path, spidev_rate);
   if (mem_fd_spi < 0)
   {
@@ -631,7 +575,6 @@ static int setup_spimem_access(void)
 	return -1;
   }
   return 0;
-  #endif
 }
 
 int map_gpio_and_spi()

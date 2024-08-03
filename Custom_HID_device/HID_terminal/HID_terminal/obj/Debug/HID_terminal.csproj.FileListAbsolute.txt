@@ -1,0 +1,11 @@
+C:\Users\lubos koudelka\cases\tech010515_USB_P&P\HID_terminal\HID_terminal\bin\Debug\HID_terminal.exe.config
+C:\Users\lubos koudelka\cases\tech010515_USB_P&P\HID_terminal\HID_terminal\obj\Debug\HID_terminal.csprojResolveAssemblyReference.cache
+C:\Users\lubos koudelka\cases\tech010515_USB_P&P\HID_terminal\HID_terminal\obj\Debug\HID_terminal.Form1.resources
+C:\Users\lubos koudelka\cases\tech010515_USB_P&P\HID_terminal\HID_terminal\obj\Debug\HID_terminal.Properties.Resources.resources
+C:\Users\lubos koudelka\cases\tech010515_USB_P&P\HID_terminal\HID_terminal\obj\Debug\HID_terminal.csproj.GenerateResource.Cache
+C:\Users\lubos koudelka\cases\tech010515_USB_P&P\HID_terminal\HID_terminal\bin\Debug\HID_terminal.exe
+C:\Users\lubos koudelka\cases\tech010515_USB_P&P\HID_terminal\HID_terminal\bin\Debug\HID_terminal.pdb
+C:\Users\lubos koudelka\cases\tech010515_USB_P&P\HID_terminal\HID_terminal\bin\Debug\HidSharp.dll
+C:\Users\lubos koudelka\cases\tech010515_USB_P&P\HID_terminal\HID_terminal\bin\Debug\LibUsbDotNet.dll
+C:\Users\lubos koudelka\cases\tech010515_USB_P&P\HID_terminal\HID_terminal\obj\Debug\HID_terminal.exe
+C:\Users\lubos koudelka\cases\tech010515_USB_P&P\HID_terminal\HID_terminal\obj\Debug\HID_terminal.pdb

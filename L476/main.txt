@@ -1,3 +1,0 @@
-#include "usb_device.h"
-
-  MX_USB_DEVICE_Init();

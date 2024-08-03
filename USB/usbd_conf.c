@@ -23,6 +23,9 @@
 #include "usbd_core.h"
 #include "usbd_customhid.h"
 #include "main.h"
+
+#define USE_USBD_CONF_DEFS 0
+
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
@@ -35,8 +38,11 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE END PV */
-
+#if USE_USBD_CONF_DEFS
 PCD_HandleTypeDef hpcd_USB_OTG_FS;
+#else
+extern PCD_HandleTypeDef hpcd_USB_OTG_FS;
+#endif
 void Error_Handler(void);
 
 /* USER CODE BEGIN 0 */
@@ -63,7 +69,7 @@ extern void SystemClock_Config(void);
                        LL Driver Callbacks (PCD -> USB Device Library)
 *******************************************************************************/
 /* MSP Init */
-
+#if USE_USBD_CONF_DEFS
 void HAL_PCD_MspInit(PCD_HandleTypeDef* pcdHandle)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
@@ -108,7 +114,9 @@ void HAL_PCD_MspInit(PCD_HandleTypeDef* pcdHandle)
   /* USER CODE END USB_OTG_FS_MspInit 1 */
   }
 }
+#endif
 
+#if USE_USBD_CONF_DEFS
 void HAL_PCD_MspDeInit(PCD_HandleTypeDef* pcdHandle)
 {
   if(pcdHandle->Instance==USB_OTG_FS)
@@ -145,7 +153,7 @@ void HAL_PCD_MspDeInit(PCD_HandleTypeDef* pcdHandle)
   /* USER CODE END USB_OTG_FS_MspDeInit 1 */
   }
 }
-
+#endif
 /**
   * @brief  Setup stage callback
   * @param  hpcd: PCD handle

@@ -73,9 +73,11 @@
 /*---------- -----------*/
 #define USBD_SELF_POWERED     1U
 /*---------- -----------*/
+// ! was 64 in the example
 #define USBD_CUSTOMHID_OUTREPORT_BUF_SIZE     32U
 /*---------- -----------*/
-#define USBD_CUSTOM_HID_REPORT_DESC_SIZE     32U
+// ! was 64 in the example. 32 isn't enough
+#define USBD_CUSTOM_HID_REPORT_DESC_SIZE     35U
 /*---------- -----------*/
 #define CUSTOM_HID_FS_BINTERVAL     1U
 

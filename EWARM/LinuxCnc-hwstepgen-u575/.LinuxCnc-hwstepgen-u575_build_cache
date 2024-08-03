@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BuildDb>
+    <Tool>
+        <Name>linker</Name>
+        <Parent>
+            <Path>C:\sourcetree\LinuxCnc-hwstepgen\EWARM\LinuxCnc-hwstepgen-u575\Exe\LinuxCnc-hwstepgen-u575.out</Path>
+            <Output>
+                <Path>C:\sourcetree\LinuxCnc-hwstepgen\EWARM\LinuxCnc-hwstepgen-u575\List\LinuxCnc-hwstepgen-u575.map</Path>
+            </Output>
+        </Parent>
+    </Tool>
+</BuildDb>

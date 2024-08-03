@@ -358,6 +358,7 @@
                     <state>$PROJ_DIR$/../Drivers/STM32U5xx_HAL_Driver/Inc/Legacy</state>
                     <state>$PROJ_DIR$/../Drivers/CMSIS/Device/ST/STM32U5xx/Include</state>
                     <state>$PROJ_DIR$/../Drivers/CMSIS/Include</state>
+                    <state>$PROJ_DIR$\..\USB</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>
@@ -1101,6 +1102,33 @@
             <name>EWARM</name>
             <file>
                 <name>$PROJ_DIR$\startup_stm32u575xx.s</name>
+            </file>
+        </group>
+        <group>
+            <name>USB</name>
+            <file>
+                <name>$PROJ_DIR$\..\USB\usb_device.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\USB\usbd_conf.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\USB\usbd_core.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\USB\usbd_ctlreq.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\USB\usbd_custom_hid_if.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\USB\usbd_customhid.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\USB\usbd_desc.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\USB\usbd_ioreq.c</name>
             </file>
         </group>
         <group>

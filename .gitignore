@@ -20,3 +20,6 @@ EWARM/LinuxCnc-hwstepgen-u575.ewt
 *.su
 *.cyclo
 *.mk
+Debug/LinuxCnc-hwstepgen-u575.elf
+*.prefs
+Debug/

@@ -1,5 +1,5 @@
 #include "main.h"
-
+#if 0
 // Steps for the next timeframe
 static int steps_future[AXES];
 
@@ -98,3 +98,4 @@ void kernel_update(void)
         position[i] += stepgen_input.velocity[i];
     }
 }
+#endif

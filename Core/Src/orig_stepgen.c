@@ -1,3 +1,4 @@
+#if 0
 /*    Copyright (C) 2013 GP Orcullo
  *
  *    This program is free software; you can redistribute it and/or modify
@@ -193,3 +194,4 @@ __inline__ void dir_lo(int i)
         if (i == 3)
                 DIR_A_LO;
 }
+#endif

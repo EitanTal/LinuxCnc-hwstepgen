@@ -1,3 +1,4 @@
+#if 0
 /********************************************************************
 * Description:  stepgen.c
 *               This file, 'stepgen.c', is a HAL component that 
@@ -1233,3 +1234,4 @@ static CONTROL parse_ctrl_type(const char *ctrl)
     if(*ctrl == 'v' || *ctrl == 'V') return VELOCITY;
     return INVALID;
 }
+#endif

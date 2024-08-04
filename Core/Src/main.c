@@ -120,7 +120,7 @@ int main(void)
   MX_TIM7_Init();
   MX_USB_OTG_FS_PCD_Init();
   /* USER CODE BEGIN 2 */
-  kernel_main_entry();
+  //kernel_main_entry();
   /* USER CODE END 2 */
 
   /* Infinite loop */

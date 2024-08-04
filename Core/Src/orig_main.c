@@ -1,3 +1,4 @@
+#if 0
 /*    Copyright (C) 2012 GP Orcullo
  *
  *    This program is free software; you can redistribute it and/or modify
@@ -316,3 +317,4 @@ void __ISR(_CORE_TIMER_VECTOR, ipl6) CoreTimerHandler(void)
     /* clear the interrupt flag */
     mCTClearIntFlag();
 }
+#endif

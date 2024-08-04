@@ -1,3 +1,4 @@
+#if 0
 // time slots stepgen
 // This kind of stepgen works on the basis of time slots. Each time slot receives an exact given number of pulses, evenly dispersed inside that timeslot.
 // This kind of stepgen never undershoots or overshoots. unlike a velocity-based stepgen which overshoots horribly
@@ -240,3 +241,4 @@ int main()
 
 #endif
 
+#endif

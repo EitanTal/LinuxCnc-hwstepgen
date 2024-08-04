@@ -93,6 +93,7 @@ uint8_t buffer[32];
 __ALIGN_BEGIN static uint8_t CUSTOM_HID_ReportDesc_FS[USBD_CUSTOM_HID_REPORT_DESC_SIZE] __ALIGN_END =
 {
   /* USER CODE BEGIN 0 */
+#if 0
   // ! Code changes from the example
 	    0x06, 0x00, 0xff,               //Usage Page(Undefined )
 	    0x09, 0x01,                    // USAGE (Undefined)
@@ -109,7 +110,11 @@ __ALIGN_BEGIN static uint8_t CUSTOM_HID_ReportDesc_FS[USBD_CUSTOM_HID_REPORT_DES
 	    0x95, 0x01,                    //   REPORT_COUNT (1)
 	    0x09, 0x01,                    //   USAGE (Undefined)
 	    0xb1, 0x02,                    //   FEATURE (Data,Var,Abs)
+#else
+  // ! Code changes from the example 2
+  0xA1, 0x01,
 
+#endif
   /* USER CODE END 0 */
   0xC0    /*     END_COLLECTION	             */
 };

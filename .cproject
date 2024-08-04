@@ -163,7 +163,6 @@
 		<project id="LinuxCnc-hwstepgen-u575.null.202484627" name="LinuxCnc-hwstepgen-u575"/>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
-	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		<scannerConfigBuildInfo instanceId="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.release.227530103;com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.release.227530103.;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.1436535830;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.935118105">
@@ -172,5 +171,74 @@
 		<scannerConfigBuildInfo instanceId="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1416619072;com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1416619072.;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.773775903;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.142346421">
 			<autodiscovery enabled="false" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo>
+	</storageModule>
+	<storageModule moduleId="refreshScope"/>
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets">
+		<buildTargets>
+			<target name="usb_device.c" path="USB" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+				<buildCommand>make</buildCommand>
+				<buildArguments>-j8</buildArguments>
+				<buildTarget>/home/eitan/LinuxCnc-hwstepgen/USB/usb_device.c</buildTarget>
+				<stopOnError>true</stopOnError>
+				<useDefaultCommand>true</useDefaultCommand>
+				<runAllBuilders>true</runAllBuilders>
+			</target>
+			<target name="usbd_conf.c" path="USB" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+				<buildCommand>make</buildCommand>
+				<buildArguments>-j8</buildArguments>
+				<buildTarget>/home/eitan/LinuxCnc-hwstepgen/USB/usbd_conf.c</buildTarget>
+				<stopOnError>true</stopOnError>
+				<useDefaultCommand>true</useDefaultCommand>
+				<runAllBuilders>true</runAllBuilders>
+			</target>
+			<target name="usbd_core.c" path="USB" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+				<buildCommand>make</buildCommand>
+				<buildArguments>-j8</buildArguments>
+				<buildTarget>/home/eitan/LinuxCnc-hwstepgen/USB/usbd_core.c</buildTarget>
+				<stopOnError>true</stopOnError>
+				<useDefaultCommand>true</useDefaultCommand>
+				<runAllBuilders>true</runAllBuilders>
+			</target>
+			<target name="usbd_ctlreq.c" path="USB" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+				<buildCommand>make</buildCommand>
+				<buildArguments>-j8</buildArguments>
+				<buildTarget>/home/eitan/LinuxCnc-hwstepgen/USB/usbd_ctlreq.c</buildTarget>
+				<stopOnError>true</stopOnError>
+				<useDefaultCommand>true</useDefaultCommand>
+				<runAllBuilders>true</runAllBuilders>
+			</target>
+			<target name="usbd_custom_hid_if.c" path="USB" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+				<buildCommand>make</buildCommand>
+				<buildArguments>-j8</buildArguments>
+				<buildTarget>/home/eitan/LinuxCnc-hwstepgen/USB/usbd_custom_hid_if.c</buildTarget>
+				<stopOnError>true</stopOnError>
+				<useDefaultCommand>true</useDefaultCommand>
+				<runAllBuilders>true</runAllBuilders>
+			</target>
+			<target name="usbd_customhid.c" path="USB" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+				<buildCommand>make</buildCommand>
+				<buildArguments>-j8</buildArguments>
+				<buildTarget>/home/eitan/LinuxCnc-hwstepgen/USB/usbd_customhid.c</buildTarget>
+				<stopOnError>true</stopOnError>
+				<useDefaultCommand>true</useDefaultCommand>
+				<runAllBuilders>true</runAllBuilders>
+			</target>
+			<target name="usbd_desc.c" path="USB" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+				<buildCommand>make</buildCommand>
+				<buildArguments>-j8</buildArguments>
+				<buildTarget>/home/eitan/LinuxCnc-hwstepgen/USB/usbd_desc.c</buildTarget>
+				<stopOnError>true</stopOnError>
+				<useDefaultCommand>true</useDefaultCommand>
+				<runAllBuilders>true</runAllBuilders>
+			</target>
+			<target name="usbd_ioreq.c" path="USB" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+				<buildCommand>make</buildCommand>
+				<buildArguments>-j8</buildArguments>
+				<buildTarget>/home/eitan/LinuxCnc-hwstepgen/USB/usbd_ioreq.c</buildTarget>
+				<stopOnError>true</stopOnError>
+				<useDefaultCommand>true</useDefaultCommand>
+				<runAllBuilders>true</runAllBuilders>
+			</target>
+		</buildTargets>
 	</storageModule>
 </cproject>

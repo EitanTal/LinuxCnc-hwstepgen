@@ -21,7 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "usb_device.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -118,8 +118,9 @@ int main(void)
   MX_LPTIM2_Init();
   MX_SPI1_Init();
   MX_TIM7_Init();
-  MX_USB_OTG_FS_PCD_Init();
+  //MX_USB_OTG_FS_PCD_Init(); // ! conflicts with the init below
   /* USER CODE BEGIN 2 */
+  MX_USB_DEVICE_Init();
   //kernel_main_entry();
   /* USER CODE END 2 */
 

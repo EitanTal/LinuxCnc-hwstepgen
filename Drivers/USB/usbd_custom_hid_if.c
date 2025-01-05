@@ -203,6 +203,7 @@ static int8_t CUSTOM_HID_OutEvent_FS(uint8_t* state)
   /* USER CODE BEGIN 6 */
   // ! code from example
   memcpy(buffer, state, sizeof(buffer));
+  buffer[0]++;
   USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, buffer, sizeof(buffer));
 
   /* Start next USB packet transfer once data processing is completed */
